@@ -5,21 +5,19 @@
   <title>แปลง Excel เป็น PDF</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="THSarabun_font_embed.js"></script>
   <script>
     window.jsPDF = window.jspdf.jsPDF;
-
-    // ฝังฟอนต์ TH Sarabun (ตัดบางส่วน)
-    jsPDF.API.events.push(['initialized', function () {
-      this.addFileToVFS("THSarabun.ttf", `
-AAEAAAALAIAAAwAwT1MvMg8SAAACAAEAAwAAAAEAAAK+GAA... (ตัด)
-      `);
-      this.addFont("THSarabun.ttf", "THSarabun", "normal");
-    }]);
   </script>
   <style>
     body {
       font-family: 'THSarabun', sans-serif;
       font-size: 16pt;
+    }
+    input, button {
+      font-family: 'THSarabun', sans-serif;
+      font-size: 16pt;
+      margin: 5px;
     }
   </style>
 </head>
@@ -40,7 +38,6 @@ AAEAAAALAIAAAwAwT1MvMg8SAAACAAEAAwAAAAEAAAK+GAA... (ตัด)
         const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
         const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
 
-        const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
         doc.setFont("THSarabun");
         doc.setFontSize(16);
@@ -50,9 +47,13 @@ AAEAAAALAIAAAwAwT1MvMg8SAAACAAEAAwAAAAEAAAK+GAA... (ตัด)
         y += 10;
 
         jsonData.forEach((row) => {
-          let line = row.map(cell => cell ?? "").join(" | ");
+          const line = row.map(cell => (cell ?? "") + "").join(" | ");
           doc.text(line, 10, y);
           y += 10;
+          if (y > 280) {
+            doc.addPage();
+            y = 20;
+          }
         });
 
         doc.save("output.pdf");
