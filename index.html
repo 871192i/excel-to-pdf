@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>แปลง Excel เป็น PDF</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+  <h2>แปลงไฟล์ Excel เป็น PDF</h2>
+  <input type="file" id="excelFile" accept=".xlsx,.xls" />
+  <button onclick="convertToPDF()">แปลงและดาวน์โหลด PDF</button>
+
+  <script>
+    async function convertToPDF() {
+      const file = document.getElementById('excelFile').files[0];
+      if (!file) return alert("กรุณาเลือกไฟล์ Excel");
+
+      const reader = new FileReader();
+      reader.onload = async function (e) {
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, { type: "array" });
+        const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+        const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF();
+        let y = 10;
+
+        jsonData.forEach((row, rowIndex) => {
+          let line = row.map(cell => cell ?? "").join(" | ");
+          pdf.text(line, 10, y);
+          y += 10;
+        });
+
+        pdf.save("output.pdf");
+      };
+      reader.readAsArrayBuffer(file);
+    }
+  </script>
+</body>
+</html>
