@@ -1,16 +1,25 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
   <meta charset="UTF-8" />
   <title>แปลง Excel เป็น PDF</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="THSarabun_font_embed.js"></script>
+  <script>
+    window.jsPDF = window.jspdf.jsPDF;
+
+    // ฝังฟอนต์ TH Sarabun
+    jsPDF.API.events.push(['initialized', function () {
+      this.addFileToVFS("THSarabun.ttf", "AAEAAAALAIAAAwAwT1Mv..."); // ⬅️ วาง Base64 เต็มที่นี่
+      this.addFont("THSarabun.ttf", "THSarabun", "normal");
+    }]);
+  </script>
   <style>
     body {
       font-family: 'THSarabun', sans-serif;
+      font-size: 16pt;
     }
-  </style> 
+  </style>
 </head>
 <body>
   <h2>แปลงไฟล์ Excel เป็น PDF</h2>
@@ -49,18 +58,5 @@
       reader.readAsArrayBuffer(file);
     }
   </script>
-  <script>
-  // Embed ฟอนต์ THSarabun
-  window.jsPDF = window.jspdf.jsPDF;
-
-  const font = "data:font/ttf;base64,AAEAAAALAIAAAwAwT1Mv..."; // ← Lisa ย่อไว้ หากต้องการเต็ม Lisa ส่งให้ใหม่
-  const fontName = "THSarabun";
-  const fontStyle = "normal";
-
-  const doc = new jsPDF();
-  doc.addFileToVFS("THSarabun.ttf", font);
-  doc.addFont("THSarabun.ttf", fontName, fontStyle);
-</script>
-
 </body>
 </html>
