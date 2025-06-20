@@ -8,9 +8,11 @@
   <script>
     window.jsPDF = window.jspdf.jsPDF;
 
-    // ฝังฟอนต์ TH Sarabun
+    // ฝังฟอนต์ TH Sarabun (ตัดบางส่วน)
     jsPDF.API.events.push(['initialized', function () {
-      this.addFileToVFS("THSarabun.ttf", "AAEAAAALAIAAAwAwT1Mv..."); // ⬅️ วาง Base64 เต็มที่นี่
+      this.addFileToVFS("THSarabun.ttf", `
+AAEAAAALAIAAAwAwT1MvMg8SAAACAAEAAwAAAAEAAAK+GAA... (ตัด)
+      `);
       this.addFont("THSarabun.ttf", "THSarabun", "normal");
     }]);
   </script>
