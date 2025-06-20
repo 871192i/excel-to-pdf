@@ -49,5 +49,18 @@
       reader.readAsArrayBuffer(file);
     }
   </script>
+  <script>
+  // Embed ฟอนต์ THSarabun
+  window.jsPDF = window.jspdf.jsPDF;
+
+  const font = "data:font/ttf;base64,AAEAAAALAIAAAwAwT1Mv..."; // ← Lisa ย่อไว้ หากต้องการเต็ม Lisa ส่งให้ใหม่
+  const fontName = "THSarabun";
+  const fontStyle = "normal";
+
+  const doc = new jsPDF();
+  doc.addFileToVFS("THSarabun.ttf", font);
+  doc.addFont("THSarabun.ttf", fontName, fontStyle);
+</script>
+
 </body>
 </html>
