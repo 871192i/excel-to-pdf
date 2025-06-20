@@ -5,15 +5,12 @@
   <title>แปลง Excel เป็น PDF</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<style>
-@font-face {
-  font-family: 'THSarabun';
-  src: url('THSarabunNew001.ttf') format('truetype');
-}
-body {
-  font-family: 'THSarabun', sans-serif;
-}
-</style> 
+  <script src="THSarabun_font_embed.js"></script>
+  <style>
+    body {
+      font-family: 'THSarabun', sans-serif;
+    }
+  </style> 
 </head>
 <body>
   <h2>แปลงไฟล์ Excel เป็น PDF</h2>
@@ -33,16 +30,21 @@ body {
         const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
 
         const { jsPDF } = window.jspdf;
-        const pdf = new jsPDF();
-        let y = 10;
+        const doc = new jsPDF();
+        doc.setFont("THSarabun");
+        doc.setFontSize(16);
 
-        jsonData.forEach((row, rowIndex) => {
+        let y = 20;
+        doc.text("ใบเสนอราคา", 10, y);
+        y += 10;
+
+        jsonData.forEach((row) => {
           let line = row.map(cell => cell ?? "").join(" | ");
-          pdf.text(line, 10, y);
+          doc.text(line, 10, y);
           y += 10;
         });
 
-        pdf.save("output.pdf");
+        doc.save("output.pdf");
       };
       reader.readAsArrayBuffer(file);
     }
