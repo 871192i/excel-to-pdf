@@ -1,62 +1,57 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8" />
-  <title>แปลง Excel เป็น PDF</title>
+  <meta charset="UTF-8">
+  <title>ใบเสนอราคา</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="THSarabun_font_embed.js"></script>
-  <script>
-    window.jsPDF = window.jspdf.jsPDF;
-  </script>
   <style>
     body {
-      font-family: 'THSarabun', sans-serif;
-      font-size: 16pt;
+      font-family: sans-serif;
+      font-size: 16px;
+      padding: 20px;
     }
-    input, button {
-      font-family: 'THSarabun', sans-serif;
-      font-size: 16pt;
-      margin: 5px;
+    h2 {
+      margin-bottom: 10px;
     }
   </style>
 </head>
 <body>
-  <h2>แปลงไฟล์ Excel เป็น PDF</h2>
-  <input type="file" id="excelFile" accept=".xlsx,.xls" />
+  <h2>แปลง Excel เป็น PDF</h2>
+  <input type="file" id="excelFile" accept=".xlsx,.xls">
   <button onclick="convertToPDF()">แปลงและดาวน์โหลด PDF</button>
 
   <script>
-    async function convertToPDF() {
+    window.jsPDF = window.jspdf.jsPDF;
+
+    const base64Font = `AAEAAAALAIAAAwAwT1Mv...` // ← วาง Base64 ของ THSarabun เต็มๆ ตรงนี้
+
+    function convertToPDF() {
       const file = document.getElementById('excelFile').files[0];
       if (!file) return alert("กรุณาเลือกไฟล์ Excel");
 
       const reader = new FileReader();
-      reader.onload = async function (e) {
+      reader.onload = function(e) {
         const data = new Uint8Array(e.target.result);
         const workbook = XLSX.read(data, { type: "array" });
-        const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-        const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+        const sheet = workbook.Sheets[workbook.SheetNames[0]];
+        const json = XLSX.utils.sheet_to_json(sheet, { header: 1 });
 
         const doc = new jsPDF();
+
+        doc.addFileToVFS("THSarabun.ttf", base64Font);
+        doc.addFont("THSarabun.ttf", "THSarabun", "normal");
         doc.setFont("THSarabun");
         doc.setFontSize(16);
 
         let y = 20;
-        doc.text("ใบเสนอราคา", 10, y);
-        y += 10;
-
-        jsonData.forEach((row) => {
-          const line = row.map(cell => (cell ?? "") + "").join(" | ");
+        json.forEach(row => {
+          const line = row.map(cell => cell ?? '').join(' | ');
           doc.text(line, 10, y);
           y += 10;
-          if (y > 280) {
-            doc.addPage();
-            y = 20;
-          }
         });
 
-        doc.save("output.pdf");
+        doc.save("ใบเสนอราคา.pdf");
       };
       reader.readAsArrayBuffer(file);
     }
